@@ -4,7 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
-  const [fileJson, setFileJson] = React.useState<any>(null);
+  const [fileJson, setFileJson] = React.useState<Array<any>>([]);
 
   const handleChange = (files: FileList | null) => {
     if (files == null) return
@@ -15,6 +15,7 @@ function App() {
   const handleImport = (file: Blob) => {
     const wb = new Excel.Workbook();
     const reader = new FileReader()
+    const arrResult: Array<any> = []
 
     reader.readAsArrayBuffer(file)
     reader.onload = () => {
@@ -24,11 +25,16 @@ function App() {
         console.log(workbook, 'workbook instance')
         workbook.eachSheet((sheet, id) => {
           sheet.eachRow((row, rowIndex) => {
-            console.log(row.values, rowIndex)
+            arrResult.push(row.values)
+            // console.log(row.values, rowIndex)
           })
         })
+        console.log('arrResult')
+        console.log(arrResult)
+        setFileJson(arrResult)
       })
     }
+
   }
 
   return (
@@ -36,7 +42,8 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Result of file upload:
+          {JSON.stringify(fileJson)}
         </p>
         <input type="file" onChange={(e) => handleChange(e.target.files)}/>
         <a
